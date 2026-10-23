@@ -1,0 +1,30 @@
+# ===== STM32CubeIDE build output =====
+**/Debug/
+**/Release/
+*.o
+*.d
+*.su
+*.cyclo
+*.elf
+*.map
+*.list
+*.bin
+*.hex
+
+# ===== Eclipse / IDE（機器相關設定） =====
+.metadata/
+**/.settings/language.settings.xml
+*.launch
+RemoteSystemsTempFiles/
+
+# ===== Python =====
+__pycache__/
+*.pyc
+.venv/
+venv/
+ble-env/
+
+# ===== 測試資料 / OS =====
+*.csv
+Thumbs.db
+.DS_Store
