@@ -3,7 +3,7 @@
 STM32 IoT node 作為 BLE **Peripheral / GATT Server**，以 FreeRTOS 的兩個 task 讀取 LSM6DSL 的**真實**三軸加速度並 notify；Raspberry Pi 4 作為 **Central / GATT Client**（Python + bleak），可訂閱加速度並寫入取樣頻率。
 加分題實作 **option (b)**：LSM6DSL significant motion detection，經 GPIO EXTI 觸發後 notify RPi。
 
-> **狀態**：韌體與 client 已完成並可編譯，硬體實測結果待補（見 [測試結果](#測試結果)）。
+
 
 ---
 
