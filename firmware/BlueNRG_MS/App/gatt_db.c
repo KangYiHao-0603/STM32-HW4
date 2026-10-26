@@ -71,6 +71,10 @@ extern uint32_t start_time;
  */
 tBleStatus Add_HWServW2ST_Service(void)
 {
+  /* ACC_BLE_PATCH: 停用 SensorDemo 的 HW service，改由 AccGatt_Init() 建立 ACC service
+   * （在 app_bluenrg_ms.c 的 USER CODE BlueNRG_MS_Init_PostTreatment 呼叫） */
+  return BLE_STATUS_SUCCESS;
+#if 0 /* ACC_BLE_PATCH */
   tBleStatus ret;
   uint8_t uuid[16];
 
@@ -109,6 +113,7 @@ tBleStatus Add_HWServW2ST_Service(void)
     return BLE_STATUS_ERROR;
 
   return BLE_STATUS_SUCCESS;
+#endif /* ACC_BLE_PATCH */
 }
 
 /**
@@ -118,6 +123,9 @@ tBleStatus Add_HWServW2ST_Service(void)
  */
 tBleStatus Add_SWServW2ST_Service(void)
 {
+  /* ACC_BLE_PATCH: 停用 SensorDemo 的 SW (quaternion) service */
+  return BLE_STATUS_SUCCESS;
+#if 0 /* ACC_BLE_PATCH */
   tBleStatus ret;
   int32_t NumberOfRecords=1;
   uint8_t uuid[16];
@@ -148,6 +156,7 @@ tBleStatus Add_SWServW2ST_Service(void)
 
 fail:
   return BLE_STATUS_ERROR;
+#endif /* ACC_BLE_PATCH */
 }
 
 /**

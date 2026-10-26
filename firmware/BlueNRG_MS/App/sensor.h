@@ -23,7 +23,8 @@
 
 #define IDB04A1 0
 #define IDB05A1 1
-#define SENSOR_DEMO_NAME   'B','l','u','e','N','R','G'
+/* ACC_BLE_PATCH: 廣播名稱，原為 'B','l','u','e','N','R','G'（8 字元以內，廣播封包 <= 31 bytes） */
+#define SENSOR_DEMO_NAME   'S','T','M','3','2','A','C','C'
 #define BDADDR_SIZE        6
 
 void Set_DeviceConnectable(void);

@@ -58,15 +58,15 @@ const osThreadAttr_t defaultTask_attributes = {
 osThreadId_t TASK_BLEHandle;
 const osThreadAttr_t TASK_BLE_attributes = {
   .name = "TASK_BLE",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 1024 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for TASK_ACC */
 osThreadId_t TASK_ACCHandle;
 const osThreadAttr_t TASK_ACC_attributes = {
   .name = "TASK_ACC",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for bleMutex */
 osMutexId_t bleMutexHandle;
@@ -84,6 +84,35 @@ extern void StartTask02(void *argument);
 extern void StartTask03(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+
+/* Hook prototypes */
+void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName);
+void vApplicationMallocFailedHook(void);
+
+/* USER CODE BEGIN 4 */
+void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
+{
+   /* Run time stack overflow checking is performed if
+   configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
+   called if a stack overflow is detected. */
+}
+/* USER CODE END 4 */
+
+/* USER CODE BEGIN 5 */
+void vApplicationMallocFailedHook(void)
+{
+   /* vApplicationMallocFailedHook() will only be called if
+   configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h. It is a hook
+   function that will get called if a call to pvPortMalloc() fails.
+   pvPortMalloc() is called internally by the kernel whenever a task, queue,
+   timer or semaphore is created. It is also called by various parts of the
+   demo application. If heap_1.c or heap_2.c are used, then the size of the
+   heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
+   FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
+   to query the size of free heap space that remains (although it does not
+   provide information on how the remaining heap might be fragmented). */
+}
+/* USER CODE END 5 */
 
 /**
   * @brief  FreeRTOS initialization
@@ -149,7 +178,7 @@ void StartDefaultTask(void *argument)
 	  for(;;)
 	  {
 	    BSP_LED_Toggle(LED2);
-	    osDelay(500);
+	    osDelay(1000);
 	  }
 
 

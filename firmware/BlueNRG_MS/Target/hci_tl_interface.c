@@ -263,7 +263,10 @@ void hci_tl_lowlevel_init(void)
   HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
   /* USER CODE BEGIN hci_tl_lowlevel_init 3 */
-
+  /* 上面把 EXTI9_5 設成 priority 0，但 hci_tl_lowlevel_isr() 會呼叫 App_BleIrqNotify()
+   * → osThreadFlagsSet()，必須 >= configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY (5)，
+   * 否則 FreeRTOS configASSERT 會卡死。改回和 gpio.c 相同的 5。 */
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 5, 0);
   /* USER CODE END hci_tl_lowlevel_init 3 */
 
 }
@@ -286,6 +289,9 @@ void hci_tl_lowlevel_isr(void)
   }
 
   /* USER CODE BEGIN hci_tl_lowlevel_isr */
-
+  /* 喚醒 TASK_BLE 處理事件（app_tasks.c）。上面 return 的情況（packet pool 滿）
+   * 由 TASK_BLE 的 10 ms 輪詢補上。 */
+  extern void App_BleIrqNotify(void);
+  App_BleIrqNotify();
   /* USER CODE END hci_tl_lowlevel_isr */
 }

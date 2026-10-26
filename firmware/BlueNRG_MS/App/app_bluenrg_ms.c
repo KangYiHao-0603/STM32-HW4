@@ -37,7 +37,7 @@
 #include "stm32l4xx_hal_tim.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "acc_gatt.h"
 /* USER CODE END Includes */
 
 /* Private defines -----------------------------------------------------------*/
@@ -206,7 +206,12 @@ void MX_BlueNRG_MS_Init(void)
   ret = aci_hal_set_tx_power_level(1,4);
 
   /* USER CODE BEGIN BlueNRG_MS_Init_PostTreatment */
-
+  /* 加速度計 GATT service（ACC / FREQ / MOTION）。原本的 Add_HWServW2ST_Service()/
+   * Add_SWServW2ST_Service() 已在 gatt_db.c 改為不建立任何 service（ACC_BLE_PATCH） */
+  ret = AccGatt_Init();
+  if (ret != BLE_STATUS_SUCCESS) {
+    PRINTF("AccGatt_Init failed: 0x%02x\r\n", ret);
+  }
   /* USER CODE END BlueNRG_MS_Init_PostTreatment */
 }
 
