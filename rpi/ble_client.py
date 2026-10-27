@@ -12,6 +12,9 @@ Usage:
   python ble_client.py                    # 掃描名稱含 STM32 的裝置
   python ble_client.py --freq 20
   python ble_client.py --addr XX:XX:XX:XX:XX:XX --csv acc.csv
+  python ble_client.py --all              # 每一筆都印（高頻時會洗版）
+
+預設每秒最多印 5 筆數據，避免洗版；輸入數字 + Enter 會顯示 [input] 並寫入 FREQ。
 """
 import argparse
 import asyncio
@@ -36,6 +39,8 @@ class AccClient:
         self.disconnected = asyncio.Event()
         self.rx_count = 0
         self.rx_rate_t0 = time.monotonic()
+        self.last_print = 0.0
+        self.print_interval = 0.0 if args.all else 1.0 / max(args.print_hz, 0.1)
         self.csv_writer = None
         self.csv_file = None
         if args.csv:
@@ -71,7 +76,9 @@ class AccClient:
         x, y, z = struct.unpack("<hhh", bytes(data[:6]))
         now = time.time()
         self.rx_count += 1
-        if not self.args.quiet:
+        # 限制印出速度，避免高頻時洗版、看不到自己輸入的字（CSV 仍記錄每一筆）
+        if not self.args.quiet and (now - self.last_print) >= self.print_interval:
+            self.last_print = now
             print(f"{now:.3f}  x={x:6d}  y={y:6d}  z={z:6d}  mg")
         if self.csv_writer:
             self.csv_writer.writerow([f"{now:.3f}", x, y, z])
@@ -111,6 +118,8 @@ class AccClient:
         threading.Thread(target=reader, daemon=True).start()
         while True:
             line = (await queue.get()).strip()
+            if line:
+                print(f"[input] {line}")
             if line.isdigit():
                 try:
                     await self.set_freq(int(line))
@@ -169,7 +178,10 @@ def main():
     p.add_argument("--addr", help="直接指定 MAC address")
     p.add_argument("--freq", type=int, help="連線後設定的取樣頻率 (Hz, 1~100)")
     p.add_argument("--csv", help="把資料存成 CSV")
-    p.add_argument("--quiet", action="store_true", help="不逐筆印出，只印速率")
+    p.add_argument("--quiet", action="store_true", help="不印數據，只印速率")
+    p.add_argument("--print-hz", type=float, default=5.0,
+                   help="每秒最多印出幾筆數據 (default: 5)，避免洗版")
+    p.add_argument("--all", action="store_true", help="每一筆數據都印出")
     args = p.parse_args()
 
     app = AccClient(args)
